@@ -1,16 +1,13 @@
 FROM payara/server-full:5.2022.5
 
-# Establecer el directorio de trabajo
-WORKDIR $DEPLOY_DIR
-
-# Copiar el archivo WAR al directorio de despliegue
+# Copiamos el WAR al directorio de despliegue de Payara
 COPY ./ModuloCompras.war $DEPLOY_DIR
 
-# Asegurarse de que el archivo tenga los permisos correctos
-RUN chmod +x $DEPLOY_DIR/ModuloCompras.war
+# Exponemos los puertos 8080 (para la app) y 4848 (para el admin)
+EXPOSE 8080 4848
 
-# Exponer el puerto en el que la aplicación escuchará
-EXPOSE 8080
+# Deploy del WAR en Payara
+CMD ["asadmin", "deploy", "--name", "ModuloCompras", "--contextroot", "/", "$DEPLOY_DIR/ModuloCompras.war"]
 
-# Comando para iniciar Payara Server
-CMD ["asadmin", "deploy", "ModuloCompras.war"]
+# Levantamos el servidor en modo verbose para ver logs
+CMD ["asadmin", "start-domain", "--verbose"]
